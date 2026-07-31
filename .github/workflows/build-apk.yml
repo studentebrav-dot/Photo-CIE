@@ -1,34 +1,38 @@
-name: Build Android APK
+name: Build Photo-CIE APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Grant execute permission for Gradle
-        run: chmod +x gradlew
+      - name: Controllo progetto
+        run: |
+          ls -la
+          find . -maxdepth 3 -name "build.gradle" -o -name "settings.gradle" -o -name "gradlew"
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Trova APK
+        run: |
+          find . -name "*.apk"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: Photo-CIE-debug
+          path: "**/*.apk"
